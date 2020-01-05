@@ -55,7 +55,7 @@ public class DBConnection {
 
     }
 
-    private int ReleaseRSandSTMT() {
+    public int ReleaseRSandSTMT() {
 
         //Se limpian los valores del result set y del statement
         if (this.rs != null) {

@@ -1,6 +1,7 @@
 package Departamentos;
 
 
+import DB.DBConnection;
 import Semaforo.SemaforoForm;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -106,65 +107,24 @@ public class AgregarDepartamento extends javax.swing.JFrame {
         String NombreDepartamento = jTextField1.getText();
         String DescripcionDepartamento = jTextArea1.getText();
         if(!NombreDepartamento.equals("") && !DescripcionDepartamento.equals("")) {
-            Connection conn;
-            
-            try {
-             Class.forName("com.mysql.jdbc.Driver");
-            conn
-                    = DriverManager.getConnection("jdbc:mysql://localhost/semaforo?"
-                            + "user=root&password=4b0g4d0sf@M18");
-
-            // Do something with the Connection
-            Statement stmt = null;
-            ResultSet rs = null;
+            DBConnection DB = new DBConnection();
 
             try {
                 String sql = "INSERT INTO `departamentos` (`id`, `nombre`, `descripcion`) VALUES (NULL, ?, ?);";
-                PreparedStatement preparedStatement = conn.prepareStatement(sql);
-                preparedStatement.setString(1, NombreDepartamento);
-                preparedStatement.setString(2, DescripcionDepartamento);
-                preparedStatement.executeUpdate();
+                DB.PrepareQuery(sql);
+                DB.preparedStatement.setString(1, NombreDepartamento);
+                DB.preparedStatement.setString(2, DescripcionDepartamento);
+                DB.preparedStatement.executeUpdate();
                 SemaforoForm recargar = new SemaforoForm();
                 this.setVisible(false);
-                
             } catch (SQLException ex) {
                 // handle any errors
                 System.out.println("SQLException: " + ex.getMessage());
                 System.out.println("SQLState: " + ex.getSQLState());
                 System.out.println("VendorError: " + ex.getErrorCode());
             } finally {
-                // it is a good idea to release
-                // resources in a finally{} block
-                // in reverse-order of their creation
-                // if they are no-longer needed
-
-                if (rs != null) {
-                    try {
-                        rs.close();
-                    } catch (SQLException sqlEx) {
-                    } // ignore
-
-                    rs = null;
-                }
-
-                if (stmt != null) {
-                    try {
-                        stmt.close();
-                    } catch (SQLException sqlEx) {
-                    } // ignore
-
-                    stmt = null;
-                }
+                DB.ReleaseRSandSTMT();
             }
-
-        } catch (SQLException ex) {
-            // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SemaforoForm.class.getName()).log(Level.SEVERE, null, ex);
-        }   
             
         } else {
             jLabel3.setText("Es necesario ingresar un nombre y descripcion.");

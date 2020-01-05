@@ -5,6 +5,7 @@ import Accidentes.Configuracion;
 import Configuracion.Settings;
 import Accidentes.AgregarIncidente;
 import Accidentes.AgregarAccidente;
+import DB.DBConnection;
 import Departamentos.AgregarDepartamento;
 import Usuarios.AgregarUsuario;
 import java.awt.BorderLayout;
@@ -237,50 +238,34 @@ public class SemaforoForm extends javax.swing.JFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
-        //NumeroAccidentes Accidentes1 = new NumeroAccidentes();
-        //Accidentes1.setVisible(true);
 
-        Connection conn;
-
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn
-                    = DriverManager.getConnection("jdbc:mysql://localhost/semaforo?"
-                            + "user=root&password=4b0g4d0sf@M18");
-
-            // Do something with the Connection
-            Statement stmt = null;
-            ResultSet rs = null;
+        DBConnection DB = new DBConnection();
 
             try {
-                stmt = conn.createStatement();
-                rs = stmt.executeQuery("SELECT count(*) FROM accidentes");
-                ResultSetMetaData rsmd = rs.getMetaData();
+                DB.stmt = DB.Conn.createStatement();
+                DB.rs = DB.stmt.executeQuery("SELECT count(*) FROM accidentes");
+                ResultSetMetaData rsmd = DB.rs.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
 
-                while (rs.next()) {
+                while (DB.rs.next()) {
                     for (int i = 1; i <= columnsNumber; i++) {
                         if (i > 1) {
                             System.out.print(",  ");
                         }
-                        String columnValue = rs.getString(i);
-                        this.NumeroAccidentes = Integer.parseInt(rs.getString(1));
-                        //System.out.print(columnValue + " " + rsmd.getColumnName(i));
+                        this.NumeroAccidentes = Integer.parseInt(DB.rs.getString(1));
                     }
 
                 }
 
-                rs = stmt.executeQuery("SELECT datediff(created_at, CURRENT_TIMESTAMP) FROM accidentes order by id DESC LIMIT 1");
+                DB.rs = DB.stmt.executeQuery("SELECT datediff(created_at, CURRENT_TIMESTAMP) FROM accidentes order by id DESC LIMIT 1");
 
-                while (rs.next()) {
+                while (DB.rs.next()) {
                     for (int i = 1; i <= columnsNumber; i++) {
                         if (i > 1) {
                             System.out.print(",  ");
                         }
-                        String columnValue = rs.getString(i);
-                        this.DiasSinAccidentes = Integer.parseInt(rs.getString(1));
+                        this.DiasSinAccidentes = Integer.parseInt(DB.rs.getString(1));
                         this.DiasSinAccidentes = Math.abs(this.DiasSinAccidentes);
-                        //System.out.print(columnValue + " " + rsmd.getColumnName(i));
                     }
                 }
 
@@ -290,40 +275,10 @@ public class SemaforoForm extends javax.swing.JFrame {
                 System.out.println("SQLState: " + ex.getSQLState());
                 System.out.println("VendorError: " + ex.getErrorCode());
             } finally {
-                // it is a good idea to release
-                // resources in a finally{} block
-                // in reverse-order of their creation
-                // if they are no-longer needed
-
-                if (rs != null) {
-                    try {
-                        rs.close();
-                    } catch (SQLException sqlEx) {
-                    } // ignore
-
-                    rs = null;
-                }
-
-                if (stmt != null) {
-                    try {
-                        stmt.close();
-                    } catch (SQLException sqlEx) {
-                    } // ignore
-
-                    stmt = null;
-                }
+              //Limpiamos los result set y statements de la conexion a la base de datos
+                DB.ReleaseRSandSTMT();
             }
 
-        } catch (SQLException ex) {
-            // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SemaforoForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //int Accidentes = 6;
         Date dateobj = new Date();
         LocalDate localDate = dateobj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int month = localDate.getMonthValue();

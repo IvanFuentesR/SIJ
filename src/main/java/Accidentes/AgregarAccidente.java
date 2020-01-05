@@ -1,6 +1,7 @@
 package Accidentes;
 
 
+import DB.DBConnection;
 import Departamentos.Departamentos;
 import Semaforo.SemaforoForm;
 import java.sql.Connection;
@@ -110,25 +111,16 @@ public class AgregarAccidente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean AddAccidente(String TextoAccidente, String Departamento) {
-        try {
             Departamentos ID = new Departamentos();
             int DepartamentoID = ID.GetDepartamentoID(Departamento);
-            Connection conn;
-            Class.forName("com.mysql.jdbc.Driver");
-            conn
-                    = DriverManager.getConnection("jdbc:mysql://localhost/semaforo?"
-                            + "user=root&password=4b0g4d0sf@M18");
-
-            // Do something with the Connection
-            Statement stmt = null;
-            ResultSet rs = null;
+            DBConnection DB = new DBConnection();
 
             try {
                 String sql = "INSERT INTO `accidentes` (`id`, `accidente`, `departamento_id`, `created_at`, `updated_at`) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);";
-                PreparedStatement preparedStatement = conn.prepareStatement(sql);
-                preparedStatement.setString(1, TextoAccidente);
-                preparedStatement.setInt(2, DepartamentoID);
-                preparedStatement.executeUpdate();
+                DB.PrepareQuery(sql);
+                DB.preparedStatement.setString(1, TextoAccidente);
+                DB.preparedStatement.setInt(2, DepartamentoID);
+                DB.preparedStatement.executeUpdate();
                 SemaforoForm recargar = new SemaforoForm();
                 return true;
 
@@ -138,40 +130,9 @@ public class AgregarAccidente extends javax.swing.JFrame {
                 System.out.println("SQLState: " + ex.getSQLState());
                 System.out.println("VendorError: " + ex.getErrorCode());
             } finally {
-                // it is a good idea to release
-                // resources in a finally{} block
-                // in reverse-order of their creation
-                // if they are no-longer needed
 
-                if (rs != null) {
-                    try {
-                        rs.close();
-                    } catch (SQLException sqlEx) {
-                    } // ignore
-
-                    rs = null;
-                }
-
-                if (stmt != null) {
-                    try {
-                        stmt.close();
-                    } catch (SQLException sqlEx) {
-                    } // ignore
-
-                    stmt = null;
-                }
+                DB.ReleaseRSandSTMT();
             }
-
-        } catch (SQLException ex) {
-            // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
-            return false;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SemaforoForm.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
         return false;
     }
 
