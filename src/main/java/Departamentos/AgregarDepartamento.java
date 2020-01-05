@@ -1,4 +1,7 @@
+package Departamentos;
 
+
+import Semaforo.SemaforoForm;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,16 +16,17 @@ import java.util.logging.Logger;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 /**
  *
  * @author cliente
  */
-public class AgregarIncidente extends javax.swing.JFrame {
+public class AgregarDepartamento extends javax.swing.JFrame {
 
     /**
-     * Creates new form AgregarIncidente
+     * Creates new form AgregarDepartamento
      */
-    public AgregarIncidente() {
+    public AgregarDepartamento() {
         initComponents();
     }
 
@@ -36,25 +40,20 @@ public class AgregarIncidente extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
 
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
+        jLabel1.setText("Nombre Departamento");
 
-        jLabel1.setText("Descripcion Incidente");
+        jLabel2.setText("Descripcion Departamento");
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
-
-        jLabel2.setText("Departamento Involucrado");
 
         jButton1.setText("Agregar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -69,14 +68,16 @@ public class AgregarIncidente extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jButton1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                            .addComponent(jTextField1)))
+                    .addComponent(jLabel3))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -84,36 +85,31 @@ public class AgregarIncidente extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        Departamentos departamentos = new Departamentos();
-        String[][] Departamentos = departamentos.GetDepartamentos();
-
-        for (int i = 0; i < Departamentos.length; i++) {
-            jComboBox1.addItem(Departamentos[i][1]);
-        }
-    }//GEN-LAST:event_formComponentShown
-
-    private boolean AddIncidente(String TextoIncidente, String Departamento) {
-        try {
-            Departamentos ID = new Departamentos();
-            int DepartamentoID = ID.GetDepartamentoID(Departamento);
+        String NombreDepartamento = jTextField1.getText();
+        String DescripcionDepartamento = jTextArea1.getText();
+        if(!NombreDepartamento.equals("") && !DescripcionDepartamento.equals("")) {
             Connection conn;
-            Class.forName("com.mysql.jdbc.Driver");
+            
+            try {
+             Class.forName("com.mysql.jdbc.Driver");
             conn
                     = DriverManager.getConnection("jdbc:mysql://localhost/semaforo?"
                             + "user=root&password=4b0g4d0sf@M18");
@@ -123,13 +119,14 @@ public class AgregarIncidente extends javax.swing.JFrame {
             ResultSet rs = null;
 
             try {
-                String sql = "INSERT INTO `incidentes` (`id`, `incidente`, `departamento_id`, `created_at`, `updated_at`) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);";
+                String sql = "INSERT INTO `departamentos` (`id`, `nombre`, `descripcion`) VALUES (NULL, ?, ?);";
                 PreparedStatement preparedStatement = conn.prepareStatement(sql);
-                preparedStatement.setString(1, TextoIncidente);
-                preparedStatement.setInt(2, DepartamentoID);
+                preparedStatement.setString(1, NombreDepartamento);
+                preparedStatement.setString(2, DescripcionDepartamento);
                 preparedStatement.executeUpdate();
-                return true;
-
+                SemaforoForm recargar = new SemaforoForm();
+                this.setVisible(false);
+                
             } catch (SQLException ex) {
                 // handle any errors
                 System.out.println("SQLException: " + ex.getMessage());
@@ -165,25 +162,13 @@ public class AgregarIncidente extends javax.swing.JFrame {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
-            return false;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SemaforoForm.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        }   
+            
+        } else {
+            jLabel3.setText("Es necesario ingresar un nombre y descripcion.");
         }
-        return false;
-    }
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        String TextoIncidente = jTextArea1.getText();
-        String Departamento = jComboBox1.getSelectedItem().toString();
-        if (!TextoIncidente.equals("")) {
-            boolean Añadido = AddIncidente(TextoIncidente, Departamento);
-            if (Añadido == true) {
-                this.setVisible(false);
-            }
-        }
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -203,30 +188,31 @@ public class AgregarIncidente extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AgregarIncidente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AgregarDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AgregarIncidente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AgregarDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AgregarIncidente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AgregarDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AgregarIncidente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AgregarDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AgregarIncidente().setVisible(true);
+                new AgregarDepartamento().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

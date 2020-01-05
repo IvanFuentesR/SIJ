@@ -1,11 +1,25 @@
+package Semaforo;
 
+import Departamentos.Departamentos;
+import Accidentes.Configuracion;
+import Configuracion.Settings;
+import Accidentes.AgregarIncidente;
+import Accidentes.AgregarAccidente;
+import Departamentos.AgregarDepartamento;
+import Usuarios.AgregarUsuario;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import static java.lang.Integer.parseInt;
 import java.util.Date;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -14,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SemaforoForm extends javax.swing.JFrame {
 
+    public final Settings sett = new Settings();
     public int NumeroAccidentes;
     public int DiasSinAccidentes;
 
@@ -47,6 +62,7 @@ public class SemaforoForm extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -54,6 +70,7 @@ public class SemaforoForm extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -85,6 +102,23 @@ public class SemaforoForm extends javax.swing.JFrame {
             }
         ));
         jScrollPane1.setViewportView(jTable1);
+
+        jPanel1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jPanel1ComponentShown(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 207, Short.MAX_VALUE)
+        );
 
         jMenu1.setText("Archivo");
 
@@ -129,6 +163,14 @@ public class SemaforoForm extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem1);
 
+        jMenuItem5.setText("Agregar Usuario");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem5);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -148,17 +190,19 @@ public class SemaforoForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(231, 231, 231)
                         .addComponent(jLabel2)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,7 +220,9 @@ public class SemaforoForm extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -288,21 +334,50 @@ public class SemaforoForm extends javax.swing.JFrame {
         jLabel4.setText("Llevamos " + this.NumeroAccidentes + " accidentes");
         jLabel5.setText("Llevamos " + this.DiasSinAccidentes + " dias sin accidentes");
         System.out.println(this.NumeroAccidentes);
-        if (this.NumeroAccidentes <= 0) {
+        if (this.NumeroAccidentes <= this.sett.GreenValue) {
             jLabel3.setIcon(new javax.swing.ImageIcon(Ruta + "semaforo_ok.png"));
 
-        } else if (this.NumeroAccidentes > 0 && this.NumeroAccidentes <= 5) {
+        } else if (this.NumeroAccidentes > this.sett.GreenValue && this.NumeroAccidentes <= this.sett.YellowValue) {
             jLabel3.setIcon(new javax.swing.ImageIcon(Ruta + "semaforo_warning.png"));
 
-        } else if (this.NumeroAccidentes > 5) {
+        } else if (this.NumeroAccidentes > this.sett.YellowValue) {
             jLabel3.setIcon(new javax.swing.ImageIcon(Ruta + "semaforo_danger.png"));
 
         }
 
         LoadTable();
-
+        CreateCalendar();
 
     }//GEN-LAST:event_formComponentShown
+
+    public void CreateCalendar() {
+        // TODO add your handling code here:
+        Calendar cal = Calendar.getInstance();
+        int lastday = cal.getActualMaximum(Calendar.DATE);
+        cal.add(Calendar.DATE, -cal.get(Calendar.DATE) + 1);
+        int offset = cal.get(Calendar.DAY_OF_WEEK) - 1;
+
+        jPanel1.setLayout(new GridLayout(0, 7));
+        ArrayList<JLabel> labelArray = new ArrayList<JLabel>();
+        for (int i = 0; i < offset; i++) {
+            labelArray.add(new JLabel(" "));
+        }
+
+        for (int i = 1; i <= lastday; i++) {
+            labelArray.add(new JLabel(String.valueOf(i)));
+        }
+
+        Iterator<JLabel> ite = labelArray.iterator();
+
+        while (ite.hasNext()) {
+            JLabel label = (JLabel) ite.next();
+            label.setHorizontalAlignment(JLabel.TRAILING);
+            jPanel1.add(label);
+        }
+
+        getContentPane().add(jPanel1, BorderLayout.CENTER);
+
+    }
 
     public void LoadTable() {
         //Obtenemos la lista de departamentos para cargarlos a la tabla
@@ -397,6 +472,16 @@ public class SemaforoForm extends javax.swing.JFrame {
         AgregarI.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        AgregarUsuario AgregarU = new AgregarUsuario();
+        AgregarU.setVisible(true);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jPanel1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentShown
+
+    }//GEN-LAST:event_jPanel1ComponentShown
+
     /**
      * @param args the command line arguments
      */
@@ -449,6 +534,8 @@ public class SemaforoForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
