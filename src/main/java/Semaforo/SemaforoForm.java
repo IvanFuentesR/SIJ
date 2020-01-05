@@ -9,6 +9,7 @@ import DB.DBConnection;
 import Departamentos.AgregarDepartamento;
 import Usuarios.AgregarUsuario;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import static java.lang.Integer.parseInt;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -238,46 +240,39 @@ public class SemaforoForm extends javax.swing.JFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
-
         DBConnection DB = new DBConnection();
 
-            try {
-                DB.stmt = DB.Conn.createStatement();
-                DB.rs = DB.stmt.executeQuery("SELECT count(*) FROM accidentes");
-                ResultSetMetaData rsmd = DB.rs.getMetaData();
-                int columnsNumber = rsmd.getColumnCount();
+        try {
+            DB.stmt = DB.Conn.createStatement();
+            DB.rs = DB.stmt.executeQuery("SELECT count(*) FROM accidentes");
+            ResultSetMetaData rsmd = DB.rs.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
 
-                while (DB.rs.next()) {
-                    for (int i = 1; i <= columnsNumber; i++) {
-                        if (i > 1) {
-                            System.out.print(",  ");
-                        }
-                        this.NumeroAccidentes = Integer.parseInt(DB.rs.getString(1));
-                    }
-
+            while (DB.rs.next()) {
+                for (int i = 1; i <= columnsNumber; i++) {
+                    this.NumeroAccidentes = Integer.parseInt(DB.rs.getString(1));
                 }
 
-                DB.rs = DB.stmt.executeQuery("SELECT datediff(created_at, CURRENT_TIMESTAMP) FROM accidentes order by id DESC LIMIT 1");
-
-                while (DB.rs.next()) {
-                    for (int i = 1; i <= columnsNumber; i++) {
-                        if (i > 1) {
-                            System.out.print(",  ");
-                        }
-                        this.DiasSinAccidentes = Integer.parseInt(DB.rs.getString(1));
-                        this.DiasSinAccidentes = Math.abs(this.DiasSinAccidentes);
-                    }
-                }
-
-            } catch (SQLException ex) {
-                // handle any errors
-                System.out.println("SQLException: " + ex.getMessage());
-                System.out.println("SQLState: " + ex.getSQLState());
-                System.out.println("VendorError: " + ex.getErrorCode());
-            } finally {
-              //Limpiamos los result set y statements de la conexion a la base de datos
-                DB.ReleaseRSandSTMT();
             }
+
+            DB.rs = DB.stmt.executeQuery("SELECT datediff(created_at, CURRENT_TIMESTAMP) FROM accidentes order by id DESC LIMIT 1");
+
+            while (DB.rs.next()) {
+                for (int i = 1; i <= columnsNumber; i++) {
+                    this.DiasSinAccidentes = Integer.parseInt(DB.rs.getString(1));
+                    this.DiasSinAccidentes = Math.abs(this.DiasSinAccidentes);
+                }
+            }
+
+        } catch (SQLException ex) {
+            // handle any errors
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            //Limpiamos los result set y statements de la conexion a la base de datos
+            DB.ReleaseRSandSTMT();
+        }
 
         Date dateobj = new Date();
         LocalDate localDate = dateobj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -301,11 +296,40 @@ public class SemaforoForm extends javax.swing.JFrame {
         }
 
         LoadTable();
-        CreateCalendar();
+        int[] Dias = GetDiasConAccidentes();
+        CreateCalendar(Dias);
 
     }//GEN-LAST:event_formComponentShown
 
-    public void CreateCalendar() {
+    public int[] GetDiasConAccidentes() {
+
+        DBConnection DB = new DBConnection();
+        try {
+            DB.stmt = DB.Conn.createStatement();
+            DB.rs = DB.stmt.executeQuery("SELECT DAY(created_at) FROM accidentes WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE());");
+            ResultSetMetaData rsmd = DB.rs.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
+            int[] Dias = new int[columnsNumber];
+            while (DB.rs.next()) {
+                for (int i = 0; i < columnsNumber; i++) {
+                    Dias[i] = Integer.parseInt(DB.rs.getString("DAY(created_at)"));
+                }
+
+            }
+            return Dias;
+        } catch (SQLException ex) {
+            // handle any errors
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            //Limpiamos los result set y statements de la conexion a la base de datos
+            DB.ReleaseRSandSTMT();
+        }
+        return null;
+    }
+
+    public void CreateCalendar(int[] Dias) {
         // TODO add your handling code here:
         Calendar cal = Calendar.getInstance();
         int lastday = cal.getActualMaximum(Calendar.DATE);
@@ -319,7 +343,17 @@ public class SemaforoForm extends javax.swing.JFrame {
         }
 
         for (int i = 1; i <= lastday; i++) {
-            labelArray.add(new JLabel(String.valueOf(i)));
+            JLabel ToAdd = new JLabel(String.valueOf(i));
+            ToAdd.setOpaque(true);
+            for (int j = 0; j < Dias.length; j++) {
+                if (Integer.parseInt(String.valueOf(i)) == Dias[j]) {
+                    ToAdd.setBackground(Color.red);
+                    ToAdd.setForeground(Color.white);
+                } else {
+                    ToAdd.setBackground(Color.green);
+                }
+            }
+            labelArray.add(ToAdd);
         }
 
         Iterator<JLabel> ite = labelArray.iterator();

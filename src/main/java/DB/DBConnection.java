@@ -33,9 +33,9 @@ public class DBConnection {
             
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            System.out.println("SQLException CLASS DBConnection: " + ex.getMessage());
+            System.out.println("SQLState CLASS DBConnection: " + ex.getSQLState());
+            System.out.println("VendorError CLASS DBConnection: " + ex.getErrorCode());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -47,9 +47,9 @@ public class DBConnection {
             return true;
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            System.out.println("SQLException CLASS DBConnection FN PrepareQuery: " + ex.getMessage());
+            System.out.println("SQLState CLASS DBConnection FN PrepareQuery: " + ex.getSQLState());
+            System.out.println("VendorError CLASS DBConnection FN PrepareQuery: " + ex.getErrorCode());
             return false;
         }
 
