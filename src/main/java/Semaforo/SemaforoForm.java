@@ -283,7 +283,6 @@ public class SemaforoForm extends javax.swing.JFrame {
         jLabel2.setText(monthString);
         jLabel4.setText("Llevamos " + this.NumeroAccidentes + " accidentes");
         jLabel5.setText("Llevamos " + this.DiasSinAccidentes + " dias sin accidentes");
-        System.out.println(this.NumeroAccidentes);
         if (this.NumeroAccidentes <= this.sett.GreenValue) {
             jLabel3.setIcon(new javax.swing.ImageIcon(Ruta + "semaforo_ok.png"));
 
@@ -306,15 +305,15 @@ public class SemaforoForm extends javax.swing.JFrame {
         DBConnection DB = new DBConnection();
         try {
             DB.stmt = DB.Conn.createStatement();
+            DB.rs = DB.stmt.executeQuery("SELECT count(*) FROM accidentes WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE());");
+            DB.rs.next();
+            int Length = DB.rs.getInt("count(*)");
+            int[] Dias = new int[Length];
             DB.rs = DB.stmt.executeQuery("SELECT DAY(created_at) FROM accidentes WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE());");
-            ResultSetMetaData rsmd = DB.rs.getMetaData();
-            int columnsNumber = rsmd.getColumnCount();
-            int[] Dias = new int[columnsNumber];
+            int i = 0;
             while (DB.rs.next()) {
-                for (int i = 0; i < columnsNumber; i++) {
-                    Dias[i] = Integer.parseInt(DB.rs.getString("DAY(created_at)"));
-                }
-
+                 Dias[i] = Integer.parseInt(DB.rs.getString("DAY(created_at)"));
+                 i++;
             }
             return Dias;
         } catch (SQLException ex) {
@@ -345,12 +344,12 @@ public class SemaforoForm extends javax.swing.JFrame {
         for (int i = 1; i <= lastday; i++) {
             JLabel ToAdd = new JLabel(String.valueOf(i));
             ToAdd.setOpaque(true);
+            ToAdd.setBackground(Color.green);
             for (int j = 0; j < Dias.length; j++) {
                 if (Integer.parseInt(String.valueOf(i)) == Dias[j]) {
+                    System.out.println("ENCONTRE!" + String.valueOf(i) + " " + Dias[j]);
                     ToAdd.setBackground(Color.red);
                     ToAdd.setForeground(Color.white);
-                } else {
-                    ToAdd.setBackground(Color.green);
                 }
             }
             labelArray.add(ToAdd);
